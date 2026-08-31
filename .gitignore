@@ -1,0 +1,66 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+.pub-cache/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.flutter-versions
+.melos_tool/
+
+# VS Code
+.vscode/
+.idea/
+
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# macOS
+.DS_Store
+
+# Android
+android/.gradle/
+android/app/build/
+android/local.properties
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/App.framework
+ios/build/
+
+# Web
+web/.dart_tool/
+
+# Env files (variables de entorno sensibles)
+.env
+
+# Archivos temporales y de sistema
+*.log
+*.tmp
+*.swp
+
+# Firebase
+firebase.json
+*.firebase/
+
+# Archivos generados por IDEs
+*.orig
+
+*.mp3
+
+# Flutter Ephemeral directories
+ios/Flutter/ephemeral/
+macos/Flutter/ephemeral/
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+
+# Android signing configs & keystores
+android/key.properties
+*.jks
+*.keystore

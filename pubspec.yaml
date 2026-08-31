@@ -1,0 +1,51 @@
+name: my_voice
+description: A minimalistic and elegant text-to-audio application.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.2.2
+  # El que estamos usando en nuestro AudioPlayerManager
+  just_audio: ^0.10.4  
+  flutter_dotenv: ^5.1.0          
+  sqflite: ^2.3.0                
+  path: ^1.8.0              
+  path_provider: ^2.1.0         
+  # He eliminado audioplayers para evitar conflictos
+  url_launcher: ^6.1.0            
+  crypto: ^3.0.0                 
+  http: ^1.4.0    
+  flutter_langdetect: ^0.0.2        
+  meta: ^1.16.0
+  logging: ^1.3.0
+  flutter_launcher_icons: ^0.14.4
+  share_plus: ^12.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0 # Bajado a 3.0.0 que es la versión estable para SDK 3.x
+  mockito: ^5.4.4 # Actualizado a la versión más estable
+  mocktail: ^1.0.4
+  build_runner: ^2.4.9
+  sqflite_common_ffi: ^2.3.0+2
+  sqflite_common: ^2.5.0+1    
+  path_provider_platform_interface: ^2.0.6      
+
+flutter:
+  uses-material-design: true
+
+  # Los assets deben tener este espaciado exacto
+  assets:
+    - .env
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/My_Voice_TTS.png" 
+  min_sdk_android: 21
+  remove_alpha_ios: true
