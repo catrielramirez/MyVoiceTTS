@@ -6,7 +6,6 @@ import 'package:path/path.dart' as p;
 
 class AudioStorage {
   final Logger _logger = Logger('AudioStorage');
-  final Map<String, Uint8List> _inMemoryCache = {};
   String? _audioDirectory;
 
   /// Garantiza que el directorio exista antes de operar
@@ -31,7 +30,7 @@ class AudioStorage {
     return await File(path).exists();
   }
 
-  /// Guarda los bytes en disco y en memoria
+  /// Guarda los bytes en disco y devuelve el path resultante.
   Future<String> saveAudio(String hash, Uint8List bytes) async {
     await _ensureInitialized();
 
@@ -39,38 +38,14 @@ class AudioStorage {
     final file = File(path);
 
     await file.writeAsBytes(bytes);
-    _inMemoryCache[hash] = bytes;
 
     _logger.fine('Archivo guardado exitosamente: $path');
     return path;
   }
 
-  /// Recupera los bytes primero desde memoria, luego desde disco
-  Future<Uint8List?> getAudio(String hash) async {
-    if (_inMemoryCache.containsKey(hash)) {
-      return _inMemoryCache[hash];
-    }
-
-    await _ensureInitialized();
-    final path = p.join(_audioDirectory!, '$hash.mp3');
-    final file = File(path);
-
-    if (await file.exists()) {
-      final bytes = await file.readAsBytes();
-      _inMemoryCache[hash] = bytes;
-      return bytes;
-    }
-
-    return null;
-  }
-
-  /// NUEVO: Elimina un audio específico de memoria y disco
+  /// Elimina un audio específico del disco.
   Future<bool> deleteAudio(String hash) async {
     try {
-      // Eliminar de caché en memoria
-      _inMemoryCache.remove(hash);
-
-      // Eliminar archivo físico
       await _ensureInitialized();
       final path = p.join(_audioDirectory!, '$hash.mp3');
       final file = File(path);
@@ -89,13 +64,9 @@ class AudioStorage {
     }
   }
 
-  /// Borra la caché de memoria.
-  void clearMemoryCache() => _inMemoryCache.clear();
-
-  /// Borra TODO: memoria y archivos físicos en disco.
+  /// Borra todos los archivos físicos en disco.
   /// Requerido por PhraseAudioService.
   Future<void> clearAll() async {
-    _inMemoryCache.clear();
     await _ensureInitialized();
 
     final directory = Directory(_audioDirectory!);
@@ -104,8 +75,7 @@ class AudioStorage {
       await directory.delete(recursive: true);
       // La recreamos vacía para futuras operaciones
       await directory.create(recursive: true);
-      _logger
-          .warning('Toda la caché de audio física y memoria ha sido borrada.');
+      _logger.warning('Toda la caché de audio física ha sido borrada.');
     }
   }
 }

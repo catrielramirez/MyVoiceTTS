@@ -234,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder: (context) => HistoryScreen(
           phrasesManagerService: widget.phrasesManagerService,
-          onPhraseSelected: (frase) => _processText(frase.texto),
+          onPhraseSelected: (frase) => _processFromFrase(frase),
         ),
       ),
     );
@@ -253,12 +253,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onSuggestionTap(Frase frase) {
-    _processText(frase.texto);
+    _processFromFrase(frase);
     _textController.clear();
     setState(() => _currentSuggestions = []);
   }
 
-  void _onPhrasePanelSelected(Frase frase) => _processText(frase.texto);
+  void _onPhrasePanelSelected(Frase frase) => _processFromFrase(frase);
 
   Future<void> _onPhraseDeleted(Frase frase) async {
     final success = await widget.phrasesManagerService.deletePhrase(frase);
@@ -284,6 +284,27 @@ class _HomeScreenState extends State<HomeScreen> {
       if (audioPath != null) {
         widget.audioPlayerManager.enqueueAudio(audioPath);
         await widget.phrasesManagerService.updatePhraseUsage(text);
+        await _loadRecentPhrases();
+      }
+    } finally {
+      if (mounted && token == _processToken) {
+        setState(() => _isProcessing = false);
+      }
+    }
+  }
+
+  /// Fast path para frases que ya existen en la BD.
+  /// Evita normalizar, hashear y consultar la BD de nuevo.
+  Future<void> _processFromFrase(Frase frase) async {
+    if (_isProcessing) return;
+    final token = ++_processToken;
+    setState(() => _isProcessing = true);
+    try {
+      final audioPath =
+          await widget.phraseAudioService.getAudioPathForFrase(frase);
+      if (!mounted || token != _processToken) return;
+      if (audioPath != null) {
+        widget.audioPlayerManager.enqueueAudio(audioPath);
         await _loadRecentPhrases();
       }
     } finally {

@@ -28,6 +28,27 @@ class PhraseAudioService {
         _ttsService = ttsService,
         _utils = utils ?? Utils();
 
+  /// Fast path: si la Frase ya tiene pathAudio y el archivo existe en disco,
+  /// lo devuelve directamente sin repetir normalización, hash ni consulta a BD.
+  /// Solo cae al pipeline completo si el archivo no existe en disco.
+  Future<String?> getAudioPathForFrase(Frase frase) async {
+    if (frase.pathAudio != null) {
+      final fileExists = await _storage.audioExists(frase.hash);
+      if (fileExists) {
+        await _database.actualizarUsoPorHash(
+            frase.hash, DateTime.now().millisecondsSinceEpoch);
+        _logger.info(
+            'Fast path: audio servido desde path conocido para: ${frase.hash}');
+        return frase.pathAudio;
+      }
+      // El archivo fue borrado del disco → caída al pipeline completo
+      _logger.warning(
+          'Fast path falló: archivo no existe en disco para ${frase.hash}, regenerando.');
+    }
+    // Fallback: sin pathAudio o archivo borrado
+    return getAudioPathForText(frase.texto);
+  }
+
   /// El método principal: Obtiene la ruta del audio para un texto.
   Future<String?> getAudioPathForText(String text) async {
     if (text.isEmpty) return null;
