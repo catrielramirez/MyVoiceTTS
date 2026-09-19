@@ -46,6 +46,10 @@ flutter pub get
 flutter run
 ```
 
+## Security note
+
+⚠️ `.env` is bundled as an app asset (see `pubspec.yaml`), so `SUPABASE_URL`/`SUPABASE_ANON_KEY` ship inside the client binary. That's acceptable for this PoC but **not recommended for production** — for a real release, load these values through a secure config mechanism instead of packaging them with the app.
+
 ## Current features
 
 * Management and history of generated phrases.
