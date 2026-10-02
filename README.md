@@ -1,6 +1,8 @@
 # My Voice TTS
 
 > ⚠️ **Proof of Concept (PoC)**: portfolio project, not production-ready.
+>
+> **Status:** no longer maintained. The original Supabase Edge Function and ElevenLabs API key have been decommissioned, so running the app requires deploying your own backend (see [Prerequisites](#prerequisites)).
 
 A Flutter mobile app that converts text to speech (TTS) using the ElevenLabs API, with a local caching layer (SQLite + physical files) that avoids regenerating repeated audio and reduces latency and API credit usage.
 
